@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title> 在线办公系统登录</title>
+
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/common.css">
+
+    <style>
+        body{
+            background: url("img/background.jpg") no-repeat;
+            background-size: 1366px,768px;
+            width: 1280px;
+            height: 600px;
+        }
+        #loginPane{
+            color: white;
+            padding:25px;
+            background-color:rgba(28,28,28,0.4);
+            height: 256px;
+            width: 420px;
+            margin-top:5%;
+            float: right;
+            margin-right: 5%;
+            border-radius: 5px;
+        }
+        #loginPane label{
+            font-size:16px;
+        }
+        input{
+            background-color:transparent!important;
+            color:white!important;
+        }
+    </style>
+</head>
+<body>
+    <h2 class="text-center" style="margin-top:5%;font-size:36px;color:white">在线办公系统</h2>
+    <div id="loginPane">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label for="username" class="col-sm-2 control-label glyphicon glyphicon-user"></label>
+                <div class="col-sm-10 input-group">
+                    <input type="text" class="form-control" id="username" placeholder="工号" v-model="username" maxlength="15" @keyup="usernameChanged">
+                    <div class="input-group-addon" style="background: transparent">{{usernameLimitState}}</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="col-sm-2 control-label glyphicon glyphicon-sunglasses"></label>
+                <div class="col-sm-10 input-group">
+                    <input type="password" class="form-control" id="password" placeholder="密码" v-model="password" maxlength="16" @keyup="passwordChanged">
+                    <div class="input-group-addon" style="background: transparent">{{passwordLimitState}}</div>
+                </div>
+
+            </div>
+
+            <button class="btn btn-primary" style="float:right;font-size:16px;width: 96px;margin-top:10%;"  @click="login">
+                {{loginButtonTitle}}</button>
+
+        </div>
+
+
+    </div>
+
+
+</body>
+<script src="js/jquery.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/vue.js"></script>
+<script src="js/md5.js"></script>
+<script src="js/custom/common.js"></script>
+<script src="js/custom/index.js"></script>
+</html>

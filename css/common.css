@@ -1,0 +1,9 @@
+body{
+    background-color:rgb(238,238,238);
+    display: none;
+}
+
+#userPane{
+    float: right;
+    margin-right: 10%;
+}
