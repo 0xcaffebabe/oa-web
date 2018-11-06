@@ -31,6 +31,7 @@
                 <div class="panel-body" id="event">
 
                         <event-adder :event="event" :all-day="allDay"></event-adder>
+                        <event-editor :event="event"></event-editor>
                         <div class="btn btn-group" id="calendarButtonPane" >
                             <button class="btn btn-default" @click="defaultView='month'">月视图</button>
                             <button class="btn btn-default" @click="defaultView='agendaWeek'">会议周视图</button>

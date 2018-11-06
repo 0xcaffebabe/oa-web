@@ -10,7 +10,6 @@ Vue.component("event-adder",{
     watch:{
         allDay:function(val){
             this.allDay=val;
-
         }
 
     },
@@ -26,6 +25,7 @@ Vue.component("event-adder",{
           for(var key in eventDto){
               if(eventDto[key]===''){
                   $("#"+key).shake(2,10,400);
+                  return;
               }else{
 
               }
@@ -34,11 +34,49 @@ Vue.component("event-adder",{
           if(this.allDay){
               eventDto.eventStart=this.event.date;
               eventDto.eventEnd=this.event.date;
+              eventDto.eventAllDay=true;
 
           }else{
-
+              eventDto.eventAllDay=false;
           }
-          console.log(eventDto);
+
+
+          if(new Date(eventDto.eventStart).getTime()>new Date(eventDto.eventEnd).getTime()){
+              oa.app.showAlert({
+                  alertTitle:"错误",
+                  alertContent:"起始日期不能大于结束日期",
+                  closeButton:{
+                      show:true,text:'关闭'
+                  }
+              });
+              return;
+          }
+
+            var that=this;
+          //提交数据到服务器
+          oa.ajax.postRequest("/ws/event/",eventDto,function(data){
+
+              if(data.message==='success'){
+                  console.log("get event list");
+                  oa.app.showAlert({
+                      alertTitle:"成功",
+                      alertContent:data.data,
+                      closeButton:{
+                          show:true,text:'关闭'
+                      }
+                  });
+                  that.$parent.getEventList();
+              }else{
+                  oa.app.showAlert({
+                      alertTitle:"错误",
+                      alertContent:data.data,
+                      closeButton:{
+                          show:true,text:'关闭'
+                      }
+                  });
+              }
+
+          });
 
 
       }
@@ -79,6 +117,66 @@ Vue.component("event-adder",{
     "</div><!-- /.modal -->"
 
 
+});
+
+Vue.component("event-editor",{
+    props:['event'],
+    methods:{
+        deleteEvent:function () {
+            var id=this.event.eventId;
+            var that=this;
+            oa.ajax.deleteRequest("/ws/event/"+id,function(data){
+
+                oa.app.showAlert({
+                    alertTitle:"删除结果",
+                    alertContent:data.data,
+                    closeButton:{
+                        show:true,text:'关闭'
+                    },
+                    closeEvent:function(){
+                        $("#eventEditor").modal("hide");
+                        that.$parent.getEventList();
+                    }
+                });
+
+            });
+        }
+    }
+    ,
+    template:"<div id='eventEditor' class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n" +
+    "  <div class=\"modal-dialog\" role=\"document\">\n" +
+    "    <div class=\"modal-content\">\n" +
+    "      <div class=\"modal-header\">\n" +
+    "        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n" +
+    "        <h4 class=\"modal-title\">{{event.eventId}}</h4>\n" +
+    "      </div>\n" +
+    "      <div class=\"modal-body\" v-html=''>\n" +
+    "        <div class='form-group' >" +
+    "           <label for='eventName' > 事件名</label><input type='text' id='eventName' class='form-control' :value='event.eventName' />" +
+    "        </div>" +
+    "<div class='form-group' >\n" +
+    "          <label for='eventStart'>事件开始时间</label><input type='datetime-local' id='eventStart' class='form-control' :value='event.eventStartTime'/>\n" +
+    "</div>"+
+    "      <div class='form-group' >\n" +
+    "          <label for='eventEnd' > 事件结束时间</label><input type='datetime-local' id='eventEnd'  class='form-control' :value='event.eventEndTime'/>\n" +
+    "     </div>"+
+    "<div class='form-group' >\n" +
+    "<div class=\"checkbox\">\n" +
+    "    <label>\n" +
+    "      <input type=\"checkbox\"> 全天事件" +
+    "    </label>\n" +
+    "  </div>"+
+    "          <label for='eventDesc' > 事件描述</label><textarea type='text' id='eventDesc' class='form-control' :value='event.eventDesc'></textarea>" +
+    "</div>"+
+    "      </div>\n" +
+    "      <div class=\"modal-footer\">\n" +
+        "<button class='btn btn-danger' @click='deleteEvent'>删除</button>"+
+    "        <button type=\"button\" @click='' class=\"btn btn-primary\"" +
+    " >保存修改</button>\n" +
+    "      </div>\n" +
+    "    </div><!-- /.modal-content -->\n" +
+    "  </div><!-- /.modal-dialog -->\n" +
+    "</div><!-- /.modal -->"
 });
 
 setTimeout(function () {
@@ -126,7 +224,6 @@ function getEvent(){
                     $('#calc').fullCalendar({
                         defaultView: this.defaultView,
                         height:560,
-
                         selectable:true,
                         locale: 'zh-cn',
                         events: that.eventList,
@@ -155,7 +252,10 @@ function getEvent(){
                         }
                         ,
                         eventClick: function(calEvent, jsEvent, view) {
-
+                            var event={
+                                eventId:calEvent.id
+                            };
+                            that.editEvent(event);
                             console.log("触发事件更改事件",calEvent);
 
                         }
@@ -165,6 +265,7 @@ function getEvent(){
                 ,
                 getEventList:function(){
                     var that=this;
+                    this.eventList=[];
                     oa.ajax.getRequest("/ws/event/self",function(data){
                         if(data.message==="success"){
                             var list=data.data;
@@ -178,7 +279,7 @@ function getEvent(){
                                     description:list[i].eventDesc
                                 });
                             }
-
+                            that.createFullCalendar();
                             that.defaultView='month';
                         }else{
 
@@ -202,6 +303,23 @@ function getEvent(){
                     }
 
 
+                }
+                ,
+                getEventById(id){
+                    var that=this;
+                    oa.ajax.getRequest("/ws/event/"+id,function(data){
+                       if(data.message==="success"){
+                           that.event=data.data;
+
+                       }else{
+                           console.log("get event by id fail");
+                       }
+                    });
+                }
+                ,
+                editEvent:function(event){
+                    this.getEventById(event.eventId);
+                    $("#eventEditor").modal("show");
                 }
 
 

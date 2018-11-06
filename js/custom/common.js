@@ -1,7 +1,7 @@
 
 Vue.component("alert",{
     props:['alert'],
-    template:"<div id='alert' class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n" +
+    template:"<div id='alert' class=\"modal fade\" style='z-index: 9999' tabindex=\"-1\" role=\"dialog\">\n" +
     "  <div class=\"modal-dialog\" role=\"document\">\n" +
     "    <div class=\"modal-content\">\n" +
     "      <div class=\"modal-header\">\n" +
@@ -186,11 +186,7 @@ function getOa() {
             methods:{
                 showAlert:function(alert){
                     this.alert=alert;
-                    if(this.alert.closeEvent===null){
-                        this.alert.closeEvent=function () {
-                            location="./";
-                        }
-                    }
+
                     $('#alert').on('hide.bs.modal', this.alert.closeEvent);
                     $("#alert").modal("show");
 
