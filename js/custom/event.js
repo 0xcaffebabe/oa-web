@@ -121,6 +121,12 @@ Vue.component("event-adder",{
 
 Vue.component("event-editor",{
     props:['event'],
+    data:function(){
+        return {
+            allDay:false
+        }
+    }
+    ,
     methods:{
         deleteEvent:function () {
             var id=this.event.eventId;
@@ -141,6 +147,79 @@ Vue.component("event-editor",{
 
             });
         }
+        ,
+        editEvent:function(){
+            console.log();
+            var eventDto={
+                eventName:$("#eventNameEdit").val(),
+                eventDesc:$("#eventDescEdit").val(),
+                eventStart:$("#eventStartEdit").val(),
+                eventEnd:$("#eventEndEdit").val()
+            };
+
+            for(var key in eventDto){
+                if(eventDto[key]===''){
+                    $("#"+key+"Edit").shake(2,10,400);
+                    return;
+                }else{
+
+                }
+            }
+
+            if(this.allDay){
+                eventDto.eventStart=this.event.date;
+                eventDto.eventEnd=this.event.date;
+                eventDto.eventAllDay=true;
+
+            }else{
+                eventDto.eventAllDay=false;
+            }
+
+
+            if(new Date(eventDto.eventStart).getTime()>new Date(eventDto.eventEnd).getTime()){
+                oa.app.showAlert({
+                    alertTitle:"错误",
+                    alertContent:"起始日期不能大于结束日期",
+                    closeButton:{
+                        show:true,text:'关闭'
+                    }
+                });
+                return;
+            }
+
+            var that=this;
+            console.log(eventDto);
+            //提交数据到服务器
+            oa.ajax.postRequest("/ws/event/"+this.event.eventId,eventDto,function(data){
+
+                if(data.message==='success'){
+                    console.log("get event list");
+                    oa.app.showAlert({
+                        alertTitle:"成功",
+                        alertContent:data.data,
+                        closeButton:{
+                            show:true,text:'关闭'
+                        }
+                        ,
+                        closeEvent:function(){
+                            $("#eventEditor").modal("hide");
+                        }
+                    });
+                    that.$parent.getEventList();
+                }else{
+                    oa.app.showAlert({
+                        alertTitle:"错误",
+                        alertContent:data.data,
+                        closeButton:{
+                            show:true,text:'关闭'
+                        }
+                    });
+                }
+
+            });
+
+
+        }
     }
     ,
     template:"<div id='eventEditor' class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n" +
@@ -152,26 +231,26 @@ Vue.component("event-editor",{
     "      </div>\n" +
     "      <div class=\"modal-body\" v-html=''>\n" +
     "        <div class='form-group' >" +
-    "           <label for='eventName' > 事件名</label><input type='text' id='eventName' class='form-control' :value='event.eventName' />" +
+    "           <label for='eventName' > 事件名</label><input type='text' id='eventNameEdit' class='form-control' :value='event.eventName' />" +
     "        </div>" +
     "<div class='form-group' >\n" +
-    "          <label for='eventStart'>事件开始时间</label><input type='datetime-local' id='eventStart' class='form-control' :value='event.eventStartTime'/>\n" +
+    "          <label for='eventStart'>事件开始时间</label><input type='datetime-local' id='eventStartEdit' class='form-control' :value='event.eventStartTime'/>\n" +
     "</div>"+
     "      <div class='form-group' >\n" +
-    "          <label for='eventEnd' > 事件结束时间</label><input type='datetime-local' id='eventEnd'  class='form-control' :value='event.eventEndTime'/>\n" +
+    "          <label for='eventEnd' > 事件结束时间</label><input type='datetime-local' id='eventEndEdit'  class='form-control' :value='event.eventEndTime' v-show='!allDay'/>\n" +
     "     </div>"+
     "<div class='form-group' >\n" +
     "<div class=\"checkbox\">\n" +
     "    <label>\n" +
-    "      <input type=\"checkbox\"> 全天事件" +
+    "      <input type=\"checkbox\" v-model='allDay'> 全天事件" +
     "    </label>\n" +
     "  </div>"+
-    "          <label for='eventDesc' > 事件描述</label><textarea type='text' id='eventDesc' class='form-control' :value='event.eventDesc'></textarea>" +
+    "          <label for='eventDesc' > 事件描述</label><textarea type='text' id='eventDescEdit' class='form-control' :value='event.eventDesc'></textarea>" +
     "</div>"+
     "      </div>\n" +
     "      <div class=\"modal-footer\">\n" +
         "<button class='btn btn-danger' @click='deleteEvent'>删除</button>"+
-    "        <button type=\"button\" @click='' class=\"btn btn-primary\"" +
+    "        <button type=\"button\" @click='editEvent' class=\"btn btn-primary\"" +
     " >保存修改</button>\n" +
     "      </div>\n" +
     "    </div><!-- /.modal-content -->\n" +
