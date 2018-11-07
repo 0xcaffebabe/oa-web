@@ -58,7 +58,7 @@ Vue.component("left-nav",{
    template:"<ul class=\"nav nav-pills nav-stacked\">\n" +
    "                <li role=\"presentation\" ><a href=\"main.html\">主页</a></li>\n" +
    "                <li role=\"presentation\" ><a href=\"event.html\">待办事项</a></li>\n" +
-   "                <li role=\"presentation\"><a href=\"#\">公告</a></li>\n" +
+   "                <li role=\"presentation\"><a href=\"notice.html\">公告</a></li>\n" +
    "            </ul>"
 });
 
@@ -141,7 +141,8 @@ function getOa() {
             checking:{
                 checkingTimeURL:"/ws/checking/time",
                 dutyStateURL:"/ws/checking/dutyState",
-                recentCheckingListURL:"/ws/checking/self/recent"
+                recentCheckingListURL:"/ws/checking/self/recent",
+
             }
         }
         ,
@@ -190,6 +191,17 @@ function getOa() {
                     $('#alert').on('hide.bs.modal', this.alert.closeEvent);
                     $("#alert").modal("show");
 
+                }
+                ,
+                alertBox:function(title,content){
+                    this.showAlert({
+                        alertTitle:title,
+                        alertContent:content,
+                        closeButton:{
+                            show:true,text:'关闭'
+                        }
+
+                    });
                 }
             }
         })
