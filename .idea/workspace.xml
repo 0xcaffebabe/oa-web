@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b606c7f2-c5c1-4b1d-97f4-7e51824f6151" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/js/custom/notice.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/js/wangEditor.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/notice.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/custom/common.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/custom/common.js" afterDir="false" />
-    </list>
+    <list default="true" id="b606c7f2-c5c1-4b1d-97f4-7e51824f6151" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -32,7 +26,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="notice.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="notice.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/custom/notice.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="195">
@@ -42,6 +36,11 @@
               </folding>
             </state>
           </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
     </leaf>
@@ -190,16 +189,15 @@
       <workItem from="1541044682397" duration="14534000" />
       <workItem from="1541398086994" duration="14658000" />
       <workItem from="1541470005668" duration="14141000" />
-      <workItem from="1541573813185" duration="8348000" />
+      <workItem from="1541573813185" duration="9401000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="127706000" />
+    <option name="totallyTimeSpent" value="128759000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="784" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24963397" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -253,19 +251,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/js/custom/common.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1230">
-          <caret line="82" column="13" selection-start-line="82" selection-start-column="13" selection-end-line="82" selection-end-column="13" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="e#333#340#1" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#div#1;n#div#0;n#nav#0;n#!!top" expanded="true" />
-            <element signature="n#!!block;n#getNavPane#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/js/custom/event.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4005">
@@ -658,6 +643,9 @@
           </folding>
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
   </component>
 </project>
