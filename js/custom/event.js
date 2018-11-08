@@ -282,6 +282,7 @@ function getEvent(){
                 eventEnd: {},
                 eventName: '',
                 eventDesc: '',
+                search:''
 
             }
             ,
@@ -355,9 +356,11 @@ function getEvent(){
                                     title: list[i].eventName,
                                     start:list[i].eventStartTime,
                                     end:list[i].eventEndTime,
-                                    description:list[i].eventDesc
+                                    description:list[i].eventDesc,
+                                    textColor:'white'
                                 });
                             }
+
                             that.createFullCalendar();
                             that.defaultView='month';
                         }else{
@@ -369,7 +372,34 @@ function getEvent(){
 
 
 
-                },
+                }
+                ,
+                searchEvent:function(){
+
+                    for(var i=0;i<this.eventList.length;i++){
+                        if(this.eventList[i].title.indexOf(this.search)!==-1
+                        || this.eventList[i].description.indexOf(this.search)!==-1){
+
+                            this.eventList[i].textColor='black';
+                        }
+
+                    }
+                    this.createFullCalendar();
+                    this.defaultView='month';
+
+                }
+                ,
+                clear:function(){
+                    this.search='';
+                    for(var i=0;i<this.eventList.length;i++){
+
+                            this.eventList[i].textColor='white';
+
+                    }
+                    this.createFullCalendar();
+                    this.defaultView='month';
+                }
+                ,
                 createEvent:function (event) {
                     this.event=event;
                     //如果所选择日期已经是过去
