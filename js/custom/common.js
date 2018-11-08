@@ -106,6 +106,17 @@ function getOa() {
                 });
             }
             ,
+            putRequest:function(url,data,callback){
+                $.ajax({
+                    url:url,
+                    method:"PUT",
+                    headers:{"Content-Type":"application/json"},
+                    data:JSON.stringify(data),
+                    success:callback,
+                    error:this.error
+                });
+            }
+            ,
             deleteRequest:function (url,callback) {
                 $.ajax({
                     url:url,
@@ -187,7 +198,6 @@ function getOa() {
             methods:{
                 showAlert:function(alert){
                     this.alert=alert;
-
                     $('#alert').on('hide.bs.modal', this.alert.closeEvent);
                     $("#alert").modal("show");
 

@@ -13,7 +13,7 @@ Vue.component("notice-shower",{
     "<span>{{notice.noticeSender}}</span>"+
     "<span class='label label-primary'>{{notice.senderDepartment}}</span>"+
     "<span> {{notice.createTime}}</span>"+
-    "<div>{{notice.noticeContent}}</div>"
+    "<div v-html='notice.noticeContent'></div>"
     +
     "      </div>\n" +
     "      <div class=\"modal-footer\">\n" +

@@ -28,10 +28,14 @@
                 </div>
                 <div class="panel-body" id="notice">
 
-                    <notice-adder></notice-adder>
+                    <notice-adder :notice-dto="notice"></notice-adder>
                     <div class="form-inline">
-                        <input type="text" class="form-control">
-                        <button class="btn btn-primary">搜索</button>
+                        <input type="text" class="form-control" v-model="search">
+                        <div class="btn-group">
+                            <button class="btn btn-primary" @click="getNoticeList">搜索</button>
+                            <button class="btn btn-success" @click="clear">清空</button>
+                        </div>
+
                     </div>
                     <div class="btn-group" style="float:right">
                         <button class="btn btn-primary" @click="createNotice">发布公告</button>
@@ -52,8 +56,8 @@
                             <td>{{notice.createTime}}</td>
                             <td>
                                 <div class="btn-group">
-                                    <button class="btn btn-warning">修改</button>
-                                    <button class="btn btn-danger">删除</button>
+                                    <button class="btn btn-success" @click="updateNotice" :data-notice-id="notice.noticeId">修改</button>
+                                    <button class="btn btn-danger" @click="deleteNotice" :data-notice-id="notice.noticeId">删除</button>
                                 </div>
                             </td>
                         </tr>
