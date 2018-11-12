@@ -59,6 +59,7 @@ Vue.component("left-nav",{
    "                <li role=\"presentation\" ><a href=\"main.html\">主页</a></li>\n" +
    "                <li role=\"presentation\" ><a href=\"event.html\">待办事项</a></li>\n" +
    "                <li role=\"presentation\"><a href=\"notice.html\">公告</a></li>\n" +
+       "<li role=\"presentation\"><a href=\"checking.html\">考勤</a></li>"+
    "            </ul>"
 });
 
