@@ -25,7 +25,7 @@ Vue.component("alert",{
 Vue.component("nav-pane",{
     props:['user'],
     template:"<nav class=\"navbar navbar-inverse\">\n" +
-    "        <div class=\"container-fluid\">\n" +
+    "       </message><div class=\"container-fluid\">\n" +
     "\n" +
     "            <div class=\"navbar-header\">\n" +
     "                <a href=\"\" class=\"navbar-brand\">OA</a>\n" +
@@ -43,7 +43,7 @@ Vue.component("nav-pane",{
     "                        <span class=\"caret\"></span>\n" +
     "                    </button>\n" +
     "                    <ul class=\"dropdown-menu\">\n" +
-    "                        <li><a href=\"#\">个人信息</a></li>\n" +
+    "                        <li><a href=\"person.html\">个人信息</a></li>\n" +
     "                        <li role=\"separator\" class=\"divider\"></li>\n" +
     "                        <li><a href=\"#\" @click=\"user.logout\">退出登录</a></li>\n" +
     "                    </ul>\n" +
@@ -61,7 +61,70 @@ Vue.component("left-nav",{
    "                <li role=\"presentation\"><a href=\"notice.html\">公告</a></li>\n" +
    "                <li role=\"presentation\"><a href=\"checking.html\">考勤</a></li>"+
    "                <li role=\"presentation\"><a href=\"message.html\">通信</a></li>"+
+       "<li role=\"presentation\"><a href=\"staff.html\">下级</a></li>"+
    "            </ul>"
+});
+
+Vue.component("message",{
+    props:["message"],
+    watch:{
+        message:function (message) {
+            this.messageList.push(message);
+        }
+    }
+    ,
+    methods:{
+        getMessageListByFromUser:function(fromUser){
+            fromUser=this.message.messageTo.userId;
+            var that= this;
+            oa.ajax.getRequest("/ws/message/"+fromUser+"?page=1&length=10",function (data) {
+                if(data.message==='success'){
+
+                    that.messageList=data.data.reverse();
+                    console.log(that.messageList);
+
+                }else{
+                    console.log("get message list by from user fail",data);
+                }
+            })
+        }
+        ,
+        reply:function () {
+            console.log("reply:"+this.message.messageTo.userId);
+            oa.communication.webSocket.send(JSON.stringify({
+                messageTo:this.message.messageTo.userId,
+                messageContent:this.messageContent
+            }));
+
+        }
+    }
+
+    ,
+    data:function () {
+        return {
+            messageList:[],
+            messageContent:''
+        }
+    }
+    ,
+    template:"<div id='messagePane' class=\"modal fade\" style='z-index: 9999' tabindex=\"-1\" role=\"dialog\">\n" +
+    "  <div class=\"modal-dialog\" role=\"document\">\n" +
+    "    <div class=\"modal-content\">\n" +
+    "      <div class=\"modal-header\">\n" +
+    "        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n" +
+    "        <h4 class=\"modal-title\">与{{message.messageTo.userInfo.fullName}}聊天</h4>\n" +
+    "      </div>\n" +
+    "      <div class=\"modal-body\" v-html=''>\n" +
+    "        <ul><li v-for='item in messageList'>{{item.messageFrom.userInfo.fullName}}--{{item.createTime}}:{{item.messageContent}}</li></ul>\n" +
+    "      </div>\n" +
+    "      <div class=\"modal-footer\">\n" +
+        "<input type='text' class='form-control' v-model='messageContent'/><button class='btn btn-primary' @click='reply'>回复</button>"+
+    "        <button type=\"button\" class=\"btn btn-primary\" @click='getMessageListByFromUser' " +
+    " v-if=''>刷新消息</button>\n" +
+    "      </div>\n" +
+    "    </div><!-- /.modal-content -->\n" +
+    "  </div><!-- /.modal-dialog -->\n" +
+    "</div><!-- /.modal -->"
 });
 
 
@@ -218,11 +281,79 @@ function getOa() {
             }
         })
         ,
-        navPane:null
+        navPane:null,
+        communication:{
+            messageContainer:{},
+            webSocket:{}
+            ,
+            receiveMessage:function(message){
+                this.message=message;
+                $("#messageContainer").modal("show");
+                this.messageContainer.message=JSON.parse(message);
+                console.log("接收到消息：",this.messageContainer.message);
+            }
+            ,
+            sendMessage:function(messageDto){
+                oa.communication.webSocket.send(JSON.stringify(messageDto));
+            }
+            ,
+            connect:function(){
+
+                $.ajax({
+                    url:"/ws/session/",
+                    success:function(data){
+                        var sessionId=data.data;
+                        var ws=new WebSocket("ws://127.0.0.1/ws/comm");
+                        if(ws!=null){
+                            oa.communication.webSocket=ws;
+                        }
+
+                        ws.onopen=function () {
+                            ws.send(sessionId);
+
+                            //心跳包
+                            setInterval(function () {
+                                ws.send("heart");
+                            },1000);
+
+
+                        };
+
+                        ws.onmessage=function (msg) {
+                            oa.communication.receiveMessage(msg.data);
+                        }
+
+                    }
+                    ,
+                    error:function(data){
+                        console.log("error:",data);
+                    }
+                });
+            }
+        }
 
 
 
     };
+}
+
+function getMessageContainer(){
+    return new Vue({
+       el:"#messageContainer",
+       data:{
+           message:{
+               messageFrom:{
+                   userInfo:{}
+               }
+               ,
+               messageTo:{
+                    userInfo:{}
+               }
+           }
+
+       }
+
+    });
 }
 
 function getNavPane(){
@@ -244,7 +375,7 @@ function getNavPane(){
                             }
                         });
                     }
-                }
+                },
 
             }
             ,
@@ -312,6 +443,15 @@ if(location.pathname.endsWith("/")){
             oa.navPane=getNavPane();
             oa.leftNavPane=getLeftNavPane();
             oa.leftNavPane.choseActiveLeftNav();
+            oa.communication.connect();
+            oa.communication.messageContainer=getMessageContainer();
+
+            // setTimeout(function () {
+            //     oa.communication.sendMessage({
+            //         messageTo:2,messageContent:new Date().toISOString()
+            //     })
+            // },1500);
+
         }else{
             //如果没有登录，跳回首页
             // location="./";
@@ -327,6 +467,43 @@ if(location.pathname.endsWith("/")){
                 }
             });
 
+        }
+    });
+}
+
+
+function communication(){
+    $.ajax({
+        url:"/ws/session/",
+        success:function(data){
+            var sessionId=data.data;
+            var ws=new WebSocket("ws://127.0.0.1/ws/comm");
+            console.log(document.cookie);
+            ws.onopen=function () {
+
+                ws.send(sessionId);
+
+                //心跳包
+                setInterval(function () {
+                    ws.send("heart");
+                },1000);
+
+                setTimeout(function () {
+                    ws.send(JSON.stringify({
+                        messageTo:2,messageContent:new Date().toISOString()
+                    }));
+                },2500);
+
+            };
+
+            ws.onmessage=function (msg) {
+                console.log("收到了服务器的消息:",msg.data);
+            }
+
+        }
+        ,
+        error:function(data){
+            console.log("error:",data);
         }
     });
 }
